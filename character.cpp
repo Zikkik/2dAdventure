@@ -9,18 +9,23 @@ character::character(){
     stopCounter = {0.f};
     runningTime = {0.f};
     updateTime = {1.f / 8.f};
+}
 
+Vector2 character::getWorldPos(){ return worldPos; }
+
+void character::undoMovement(){
+    worldPos = worldPosLast;
 }
 
 void character::tick(float deltaTime){
+    worldPosLast = worldPos;
+
     runningTime += deltaTime;
     if(runningTime >= updateTime){
         frame++;
         runningTime = 0;
         if(frame >= maxFrames) frame = 0;
     }
-
-    Texture2D prevTex = actualTex;
 
     if (Vector2Length(velocity) != 0.0){
         worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(velocity), speed));
@@ -53,4 +58,13 @@ void character::tick(float deltaTime){
     Rectangle source{width * frame, 0.f, width * rightLeft, height};
     Rectangle dest{worldPos.x, worldPos.y, scale * width, scale * height};
     DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
+}
+
+Rectangle character::getCollisionRec(){
+    return Rectangle{
+        worldPos.x,
+        worldPos.y,
+        width * scale,
+        height * scale
+    };
 }

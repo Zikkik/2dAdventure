@@ -1,11 +1,16 @@
 #include "raylib.h"
 #include "player.hpp"
+#include "terrain.hpp"
+
+const int gravity{1'000};
 
 int main() {
     // Create new window for game (default fullscreen)
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(1920, 1080, "Game");
-    int windowDimensions[2]{GetMonitorWidth(0), GetMonitorHeight(0)};
+    float windowDimensions[2]{
+        static_cast<float>(GetMonitorWidth(0)), 
+        static_cast<float>(GetMonitorHeight(0))};
 
 
     // Setup background
@@ -13,7 +18,12 @@ int main() {
     Vector2 backgroundPos{0.f, 0.f};
     float mapScale{4.f};
 
-    player test(windowDimensions[0], windowDimensions[1]);
+    // Test terrain
+    Texture2D terrainTex = LoadTexture("data/terrain/1.png");
+    Vector2 terrainPos{0.f, windowDimensions[1] / 2};
+    terrain testTerrain(terrainPos, terrainTex);
+
+    player testPlayer(windowDimensions[0], windowDimensions[1]);
 
 
     SetTargetFPS(60);
@@ -27,9 +37,13 @@ int main() {
 
             // Draw Background
             DrawTextureEx(background, backgroundPos, 0.f, mapScale, WHITE);
-
-            test.tick(deltaTime);
+            testTerrain.renderTerrain();
+            testPlayer.tick(deltaTime);
             
+
+            if(CheckCollisionRecs(testTerrain.getCollisionRec(testPlayer.getWorldPos()), testPlayer.getCollisionRec()))
+                testPlayer.undoMovement();
+
         EndDrawing();
     }
 

@@ -19,8 +19,13 @@ class character{
         Texture2D idleTex;
         Texture2D runTex;
         Vector2 worldPos;
+        Vector2 worldPosLast;
         Vector2 velocity;
     public:
         character();
+        Vector2 getWorldPos();
+        virtual Vector2 getScreenPos() = 0;
+        void undoMovement();
         virtual void tick(float deltaTime);
+        virtual Rectangle getCollisionRec();
 };
