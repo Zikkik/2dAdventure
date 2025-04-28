@@ -2,8 +2,11 @@
 
 class character{
     protected:
+        bool isMoving;
         int frame;                  // Actual animation frame
         int maxFrames;              // Total number of animation frames
+        float stopDelay;
+        float stopCounter;
         float runningTime;
         float updateTime;
         float width;
@@ -11,8 +14,6 @@ class character{
         float scale;
         float speed;
         float rightLeft;            // Rotation
-        float lastMoveTime = 0.f;
-float moveGracePeriod = 0.1f; // w sekundach
         Rectangle characterRec;
         Texture2D actualTex;
         Texture2D idleTex;
