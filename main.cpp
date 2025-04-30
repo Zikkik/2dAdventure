@@ -30,14 +30,23 @@ int main() {
 
     // Game loop
     while(!WindowShouldClose()){
-        float deltaTime = GetFrameTime();
+        float const deltaTime = GetFrameTime();
         BeginDrawing();
         ClearBackground(WHITE);
 
-
             // Draw Background
             DrawTextureEx(background, backgroundPos, 0.f, mapScale, WHITE);
+
+
             testTerrain.renderTerrain();
+            DrawRectangleLines(testTerrain.getCollisionRec(testPlayer.getWorldPos()).x,  
+                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).y,
+                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).width,
+                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).height,
+                                RED
+                            );
+
+
             testPlayer.tick(deltaTime);
             
 

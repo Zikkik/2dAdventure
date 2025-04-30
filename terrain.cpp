@@ -13,11 +13,11 @@ void terrain::renderTerrain(){
 }
 
 Rectangle terrain::getCollisionRec(Vector2 playerPos){
-    float paddingX = 70.f;
-    float paddingY = 10.f;
+    float paddingX = terrainTex.width / 2;
+    float paddingY = terrainTex.width / 2;
     return Rectangle{
-        worldPos.x,
-        worldPos.y,
+        worldPos.x + paddingX / 2,
+        worldPos.y + paddingY / 2,
         terrainTex.width * scale - paddingX,
         terrainTex.height * scale - paddingY
     };

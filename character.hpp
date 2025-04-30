@@ -15,6 +15,8 @@ class character{
         float scale;
         float speed;
         float rightLeft;            // Rotation
+        float animCorretion;
+        float gravity;
         Rectangle characterRec;
         Texture2D actualTex;
         Texture2D idleTex;
@@ -29,6 +31,7 @@ class character{
         void undoMovement();
         void updateTex();
         void moveCharacter(float deltaTime);
+        void renderCharacter();
         virtual void tick(float deltaTime);
         virtual Rectangle getCollisionRec();
 };
