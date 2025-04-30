@@ -24,9 +24,11 @@ void character::updateTex(){
         actualTex = idleTex;
         maxFrames = 4;
     }
+
+    width = actualTex.width / maxFrames;
 }
 
-void character::tick(float deltaTime){
+void character::moveCharacter(float deltaTime){
     worldPosLast = worldPos;
 
     runningTime += deltaTime;
@@ -54,9 +56,12 @@ void character::tick(float deltaTime){
 
     updateTex();
 
-    width = actualTex.width / maxFrames;
-
     velocity = {};
+}
+
+void character::tick(float deltaTime){
+
+    moveCharacter(deltaTime);
 
     Rectangle source{width * frame, 0.f, width * rightLeft, height};
     Rectangle dest{worldPos.x, worldPos.y, scale * width, scale * height};

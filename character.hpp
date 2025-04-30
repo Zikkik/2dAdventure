@@ -28,6 +28,7 @@ class character{
         virtual Vector2 getScreenPos() = 0;
         void undoMovement();
         void updateTex();
+        void moveCharacter(float deltaTime);
         virtual void tick(float deltaTime);
         virtual Rectangle getCollisionRec();
 };
