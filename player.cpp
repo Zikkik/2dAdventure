@@ -18,8 +18,8 @@ player::player(float winWidth, float winHeight) :
 }
 
 void player::tick(float deltaTime){
-    if(IsKeyDown(KEY_A)) velocity.x -= 1.0;
-    if(IsKeyDown(KEY_D)) velocity.x += 1.0;
+    if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
+    if(IsKeyDown(KEY_D)) velocity.x += 1.f;
 
     character::tick(deltaTime);
 }

@@ -3,6 +3,7 @@
 
 character::character(){
     isMoving = false;
+    isFalling = true;
     frame = {0};
     maxFrames = {};
     stopDelay = {0.1f};
@@ -13,8 +14,16 @@ character::character(){
 
 Vector2 character::getWorldPos(){ return worldPos; }
 
-void character::undoMovement(){
-    worldPos = worldPosLast;
+void character::undoMovement(){ worldPos = worldPosLast; }
+
+void character::updateTex(){
+    if (isMoving){
+        actualTex = runTex;
+        maxFrames = 8;
+    } else {
+        actualTex = idleTex;
+        maxFrames = 4;
+    }
 }
 
 void character::tick(float deltaTime){
@@ -43,13 +52,7 @@ void character::tick(float deltaTime){
             isMoving = false;
     }
 
-    if (isMoving){
-        actualTex = runTex;
-        maxFrames = 8;
-    } else {
-        actualTex = idleTex;
-        maxFrames = 4;
-    }
+    updateTex();
 
     width = actualTex.width / maxFrames;
 

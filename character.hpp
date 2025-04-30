@@ -3,6 +3,7 @@
 class character{
     protected:
         bool isMoving;
+        bool isFalling;
         int frame;                  // Actual animation frame
         int maxFrames;              // Total number of animation frames
         float stopDelay;
@@ -26,6 +27,7 @@ class character{
         Vector2 getWorldPos();
         virtual Vector2 getScreenPos() = 0;
         void undoMovement();
+        void updateTex();
         virtual void tick(float deltaTime);
         virtual Rectangle getCollisionRec();
 };
