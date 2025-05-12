@@ -15,4 +15,10 @@ class player : public character{
 
         // Overrided tick from the character class
         virtual void tick(float deltaTime) override;
+
+        // Overrided texture update
+        virtual void updateTex() override;
+
+        // Overrided collision rectangle
+        virtual Rectangle getCollisionRec();
 };

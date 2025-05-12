@@ -17,11 +17,11 @@ int main() {
 
     // Test terrain
     Texture2D terrainTex = LoadTexture("data/terrain/1.png");
-    Vector2 terrainPos{windowDimensions[0] / 2 - terrainTex.width, windowDimensions[1] / 1.2};
+    Vector2 terrainPos{windowDimensions[0] / 2 - terrainTex.width, windowDimensions[1] / 2.5};
     terrain testTerrain(terrainPos, terrainTex);
 
     // Test player
-    player testPlayer(windowDimensions[0], windowDimensions[1]);
+    player testPlayer(windowDimensions[0], windowDimensions[1] / 3);
 
 
     SetTargetFPS(60);

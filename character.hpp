@@ -23,6 +23,7 @@ class character{
         Texture2D actualTex;
         Texture2D idleTex;
         Texture2D runTex;
+        Texture2D fallTex;
 
         // Movement variables
         float speed;
@@ -40,19 +41,20 @@ class character{
         virtual void tick(float deltaTime);
 
         // Movement methods
-        void moveCharacter(float deltaTime);
         void applyGravity(float deltaTime);
+        void moveCharacter(float deltaTime);
+        void characterFalling();
         void undoMovement();
 
         // Texture managment
-        void updateTex();
+        virtual void updateTex();
         void renderCharacter();
 
         // Return charater world position
         Vector2 getWorldPos();
 
         // Collision
-        Rectangle getCollisionRec();
+        virtual Rectangle getCollisionRec();
         void snapToGround(Rectangle ground);
         void checkTopCollision(Rectangle terrainCollision);
 };

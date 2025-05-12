@@ -8,7 +8,8 @@ player::player(float winWidth, float winHeight) :
     // Texture load
     idleTex = LoadTexture("data/animation/character-idle.png");
     runTex = LoadTexture("data/animation/character-run.png");
-    jumpTex = LoadTexture("data/animation/character-jump");
+    jumpTex = LoadTexture("data/animation/character-jump.png");
+    fallTex = LoadTexture("data/animation/character-fall.png");
     actualTex = idleTex;
 
     // World position
@@ -28,5 +29,30 @@ void player::tick(float deltaTime){
     if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
     if(IsKeyDown(KEY_D)) velocity.x += 1.f;
 
+    updateTex();
     character::tick(deltaTime);
+}
+
+void player::updateTex(){
+    if(!isOnGround){
+        actualTex = fallTex;
+        maxFrames = 3;
+        width = actualTex.width / maxFrames;
+    } else {
+        character::updateTex();
+    }   
+}
+
+Rectangle player::getCollisionRec(){
+        if(actualTex.id == fallTex.id)
+            characterRec = {
+                worldPos.x + paddingX - width / 4,
+                worldPos.y + paddingY,
+                width * scale - paddingX * 2,
+                height * scale - paddingY * 2
+            };
+        else
+            character::getCollisionRec();
+    
+    return characterRec;
 }
