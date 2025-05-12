@@ -17,7 +17,7 @@ int main() {
 
     // Test terrain
     Texture2D terrainTex = LoadTexture("data/terrain/1.png");
-    Vector2 terrainPos{0.f, windowDimensions[1] / 2};
+    Vector2 terrainPos{windowDimensions[0] / 2 - terrainTex.width, windowDimensions[1] / 1.2};
     terrain testTerrain(terrainPos, terrainTex);
 
     // Test player

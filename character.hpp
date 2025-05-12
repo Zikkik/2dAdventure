@@ -26,6 +26,7 @@ class character{
 
         // Movement variables
         float speed;
+        float gravity;
         Vector2 worldPos;
         Vector2 worldPosLast;
         Vector2 velocity;
@@ -40,8 +41,8 @@ class character{
 
         // Movement methods
         void moveCharacter(float deltaTime);
+        void applyGravity(float deltaTime);
         void undoMovement();
-        void snapToGround(Rectangle ground);
 
         // Texture managment
         void updateTex();
@@ -52,5 +53,6 @@ class character{
 
         // Collision
         Rectangle getCollisionRec();
+        void snapToGround(Rectangle ground);
         void checkTopCollision(Rectangle terrainCollision);
 };

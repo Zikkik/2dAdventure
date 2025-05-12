@@ -18,7 +18,8 @@ player::player(float winWidth, float winHeight) :
     height = actualTex.height;
     scale = {3.f};
 
-    speed = {4.f};
+    // Movement variables
+    speed = {200.f};
     rightLeft = {1.f};
 }
 
@@ -26,8 +27,6 @@ void player::tick(float deltaTime){
     // Keyboard movement
     if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
     if(IsKeyDown(KEY_D)) velocity.x += 1.f;
-    if(IsKeyDown(KEY_W)) velocity.y -= 1.f;
-    if(IsKeyDown(KEY_S)) velocity.y += 1.f;
 
     character::tick(deltaTime);
 }

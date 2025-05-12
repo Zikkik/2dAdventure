@@ -18,6 +18,9 @@ character::character(){
     // Collision variables
     paddingX = {65.f};
     paddingY = {50.f};
+
+    // Gravity
+    gravity = {100.0f};
 }
 
 // Return charater world position
@@ -52,8 +55,11 @@ void character::moveCharacter(float deltaTime){
 
     // Check character's velocity
     if (Vector2Length(velocity) != 0.0){
+        
         // Update world position
-        worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(velocity), speed));
+        Vector2 scaledVelocity = {Vector2Normalize(velocity).x * speed * deltaTime, 
+                                    velocity.y * deltaTime};
+        worldPos = Vector2Add(worldPos, scaledVelocity);
 
         // Change texture direction
         if(velocity.x < 0.f) {
@@ -77,7 +83,7 @@ void character::moveCharacter(float deltaTime){
 
     updateTex();
 
-    // Reset character's velocity
+    // Reset velocity
     velocity = {};
 }
 
@@ -95,10 +101,13 @@ void character::tick(float deltaTime){
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
     if(actualTex.id == runTex.id)
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
-   
-    moveCharacter(deltaTime);
 
-    
+    moveCharacter(deltaTime);
+    if(!isOnGround)
+        applyGravity(deltaTime);
+    else
+        velocity = {};
+
     renderCharacter();
 }
 
@@ -143,4 +152,9 @@ void character::checkTopCollision(Rectangle terrainCollision){
         isOnGround = false;
 
     snapToGround(terrainCollision);
+}
+
+void character::applyGravity(float deltaTime){
+    velocity.y += gravity;
+    worldPos.y += velocity.y * deltaTime;
 }
