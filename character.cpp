@@ -3,21 +3,22 @@
 
 character::character(){
     isMoving = false;
-    isFalling = false;
-    frame = {0};
+    frame = {};
     maxFrames = {};
     stopDelay = {0.1f};
     stopCounter = {0.f};
     runningTime = {0.f};
     updateTime = {1.f / 8.f};
-    gravity = {1000};
     animCorretion = {0.f};
 }
 
+// Return charater world position
 Vector2 character::getWorldPos(){ return worldPos; }
 
+// Change position to previous character's position
 void character::undoMovement(){ worldPos = worldPosLast; }
 
+// Update the texture based on the movement animation
 void character::updateTex(){
     if (isMoving){
         actualTex = runTex;
@@ -33,6 +34,7 @@ void character::updateTex(){
 void character::moveCharacter(float deltaTime){
     worldPosLast = worldPos;
 
+    // Time between animation frames
     runningTime += deltaTime;
     if(runningTime >= updateTime){
         frame++;
@@ -40,14 +42,18 @@ void character::moveCharacter(float deltaTime){
         if(frame >= maxFrames) frame = 0;
     }
 
+    // Check character's velocity
     if (Vector2Length(velocity) != 0.0){
+        // Update world position
         worldPos = Vector2Add(worldPos, Vector2Scale(Vector2Normalize(velocity), speed));
 
+        // Change texture direction
         if(velocity.x < 0.f) {
             rightLeft = -1.f;
             animCorretion = 0.f;
         } else {
             rightLeft = 1.f;
+            // Animation correction
             animCorretion = width / 2;
         }
 
@@ -63,6 +69,7 @@ void character::moveCharacter(float deltaTime){
 
     updateTex();
 
+    // Reset character;s velocity
     velocity = {};
 }
 
@@ -74,6 +81,7 @@ void character::renderCharacter(){
 
 void character::tick(float deltaTime){
 
+    // Testing
     Rectangle testCol = getCollisionRec();
     if(actualTex.id == idleTex.id)
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
@@ -81,20 +89,16 @@ void character::tick(float deltaTime){
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
    
     moveCharacter(deltaTime);
-
-
-
-
-    if(isFalling)
-        velocity.y += gravity * deltaTime;
     
     renderCharacter();
 }
 
 Rectangle character::getCollisionRec(){
+    // Vertical and horizontal paddings
     float paddingX = 130.f;
     float paddingY = 100.f;
 
+    // Return the rectangle based on character's actual animation
     if(actualTex.id == idleTex.id)
         return Rectangle{
             worldPos.x + paddingX / 2,
@@ -110,7 +114,6 @@ Rectangle character::getCollisionRec(){
             width * scale - paddingX,
             height * scale - paddingY
         };
-
-
+    
     return Rectangle{0};
 }

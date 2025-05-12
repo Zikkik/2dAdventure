@@ -2,8 +2,6 @@
 #include "player.hpp"
 #include "terrain.hpp"
 
-const int gravity{1'000};
-
 int main() {
     // Create new window for game (default fullscreen)
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
@@ -23,6 +21,7 @@ int main() {
     Vector2 terrainPos{0.f, windowDimensions[1] / 2};
     terrain testTerrain(terrainPos, terrainTex);
 
+    // Test player
     player testPlayer(windowDimensions[0], windowDimensions[1]);
 
 
@@ -34,10 +33,10 @@ int main() {
         BeginDrawing();
         ClearBackground(WHITE);
 
-            // Draw Background
+            // Draw background
             DrawTextureEx(background, backgroundPos, 0.f, mapScale, WHITE);
 
-
+            // Draw test terrain with collision rectangle
             testTerrain.renderTerrain();
             DrawRectangleLines(testTerrain.getCollisionRec(testPlayer.getWorldPos()).x,  
                                 testTerrain.getCollisionRec(testPlayer.getWorldPos()).y,
@@ -46,15 +45,14 @@ int main() {
                                 RED
                             );
 
-
+            // Test player tick
             testPlayer.tick(deltaTime);
             
-
+            // Temporary collision check for tests
             if(CheckCollisionRecs(testTerrain.getCollisionRec(testPlayer.getWorldPos()), testPlayer.getCollisionRec()))
                 testPlayer.undoMovement();
 
         EndDrawing();
     }
-
     CloseWindow();
 }
