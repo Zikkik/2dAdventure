@@ -31,6 +31,8 @@ class character{
         Vector2 velocity;
 
         // Collision variables
+        float paddingX;
+        float paddingY;
         Rectangle characterRec;
     public:
         character();
@@ -39,6 +41,7 @@ class character{
         // Movement methods
         void moveCharacter(float deltaTime);
         void undoMovement();
+        void snapToGround(Rectangle ground);
 
         // Texture managment
         void updateTex();
@@ -48,5 +51,6 @@ class character{
         Vector2 getWorldPos();
 
         // Collision
-        virtual Rectangle getCollisionRec();
+        Rectangle getCollisionRec();
+        void checkTopCollision(Rectangle terrainCollision);
 };

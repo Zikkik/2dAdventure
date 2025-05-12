@@ -12,5 +12,5 @@ class terrain{
         void renderTerrain();
 
         // Collision
-        Rectangle getCollisionRec(Vector2 playerPos);
+        Rectangle getCollisionRec();
 };

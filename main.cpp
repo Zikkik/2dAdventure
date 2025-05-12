@@ -10,7 +10,6 @@ int main() {
         static_cast<float>(GetMonitorWidth(0)), 
         static_cast<float>(GetMonitorHeight(0))};
 
-
     // Setup background
     Texture2D background = LoadTexture("data/map/background.png");
     Vector2 backgroundPos{0.f, 0.f};
@@ -38,19 +37,21 @@ int main() {
 
             // Draw test terrain with collision rectangle
             testTerrain.renderTerrain();
-            DrawRectangleLines(testTerrain.getCollisionRec(testPlayer.getWorldPos()).x,  
-                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).y,
-                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).width,
-                                testTerrain.getCollisionRec(testPlayer.getWorldPos()).height,
+            DrawRectangleLines(testTerrain.getCollisionRec().x,  
+                                testTerrain.getCollisionRec().y,
+                                testTerrain.getCollisionRec().width,
+                                testTerrain.getCollisionRec().height,
                                 RED
                             );
 
             // Test player tick
             testPlayer.tick(deltaTime);
+
+            testPlayer.checkTopCollision(testTerrain.getCollisionRec());
             
             // Temporary collision check for tests
-            if(CheckCollisionRecs(testTerrain.getCollisionRec(testPlayer.getWorldPos()), testPlayer.getCollisionRec()))
-                testPlayer.undoMovement();
+            //if(CheckCollisionRecs(testTerrain.getCollisionRec(), testPlayer.getCollisionRec()))
+             //   testPlayer.undoMovement();
 
         EndDrawing();
     }

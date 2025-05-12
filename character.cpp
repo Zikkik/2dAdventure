@@ -2,7 +2,11 @@
 #include "raymath.h"
 
 character::character(){
+    // Flags
     isMoving = false;
+    isOnGround = false;
+
+    // Animation variables
     frame = {};
     maxFrames = {};
     stopDelay = {0.1f};
@@ -10,6 +14,10 @@ character::character(){
     runningTime = {0.f};
     updateTime = {1.f / 8.f};
     animCorretion = {0.f};
+
+    // Collision variables
+    paddingX = {65.f};
+    paddingY = {50.f};
 }
 
 // Return charater world position
@@ -69,7 +77,7 @@ void character::moveCharacter(float deltaTime){
 
     updateTex();
 
-    // Reset character;s velocity
+    // Reset character's velocity
     velocity = {};
 }
 
@@ -89,31 +97,50 @@ void character::tick(float deltaTime){
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
    
     moveCharacter(deltaTime);
+
     
     renderCharacter();
 }
 
 Rectangle character::getCollisionRec(){
-    // Vertical and horizontal paddings
-    float paddingX = 130.f;
-    float paddingY = 100.f;
-
     // Return the rectangle based on character's actual animation
     if(actualTex.id == idleTex.id)
-        return Rectangle{
-            worldPos.x + paddingX / 2,
-            worldPos.y + paddingY / 2,
-            width * scale - paddingX,
-            height * scale - paddingY
+        characterRec = {
+            worldPos.x + paddingX,
+            worldPos.y + paddingY,
+            width * scale - paddingX * 2,
+            height * scale - paddingY * 2
         };
 
     if(actualTex.id == runTex.id)
-        return Rectangle{
-            worldPos.x + paddingX / 2 - width / 4,
-            worldPos.y + paddingY / 2,
-            width * scale - paddingX,
-            height * scale - paddingY
+        characterRec = {
+            worldPos.x + paddingX - width / 4,
+            worldPos.y + paddingY,
+            width * scale - paddingX * 2,
+            height * scale - paddingY * 2
         };
     
-    return Rectangle{0};
+    return characterRec;
+}
+
+void character::snapToGround(Rectangle ground){
+    if(isOnGround){
+        worldPos.y = ground.y - height * scale + paddingY + 3;
+        worldPosLast.y = ground.y - height * scale + paddingY + 3;
+    }
+}
+
+void character::checkTopCollision(Rectangle terrainCollision){
+    // Auxiliary variables
+    float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
+    float terrainTop = terrainCollision.y + 8;
+
+    // Check kollision with terrain and top edge
+    if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
+        characterBottom <= terrainTop)
+            isOnGround = true;
+    else 
+        isOnGround = false;
+
+    snapToGround(terrainCollision);
 }
