@@ -6,6 +6,8 @@ class player : public character{
         // Jump variables (unique for player)
         Texture2D jumpTex;
         float jumpForce;
+        float jumpTime;
+        float maxJumpTime;
 
         // Landing variables (for animation)
         float landingTimer;
@@ -27,5 +29,5 @@ class player : public character{
         virtual Rectangle getCollisionRec();
 
         // Jump function
-        void jump();
+        void jump(float deltaTime);
 };

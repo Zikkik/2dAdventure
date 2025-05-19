@@ -5,6 +5,7 @@ character::character(){
     // Flags
     isMoving = false;
     isOnGround = false;
+    isInJump = false;
 
     // Animation variables
     frame = {};
@@ -23,11 +24,27 @@ character::character(){
     gravity = {100.0f};
 }
 
-// Return charater world position
-Vector2 character::getWorldPos(){ return worldPos; }
+// Character tick
+void character::tick(float deltaTime){
 
-// Change position to previous character's position
-void character::undoMovement(){ worldPos = worldPosLast; }
+    // Testing
+    Rectangle testCol = getCollisionRec();
+    if(actualTex.id == idleTex.id)
+        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
+    if(actualTex.id == runTex.id)
+        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
+    if(actualTex.id == fallTex.id)
+        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, GREEN);
+
+    moveCharacter(deltaTime);
+
+    if(!isOnGround && !isInJump)
+        applyGravity(deltaTime);
+    else
+        velocity = {};
+
+    renderCharacter();
+}
 
 // Update the texture based on the movement animation
 void character::updateTex(){
@@ -42,7 +59,14 @@ void character::updateTex(){
     width = actualTex.width / maxFrames;
 }
 
-// Updete actual frame in character's sprite
+// Display character sprite in the window
+void character::renderCharacter(){
+    Rectangle source{width * frame, 0.f, width * rightLeft, height};
+    Rectangle dest{worldPos.x - animCorretion, worldPos.y, scale * width, scale * height};
+    DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
+}
+
+// Update actual frame in character's sprite
 void character::updateFrame(float deltaTime){
     // Time between animation frames
     runningTime += deltaTime;
@@ -65,12 +89,19 @@ void character::changeDirection(){
     }
 }
 
+// Delay for smoother texture changes
 void character::animChangeDelay(float deltaTime){
     stopCounter += deltaTime;
     if(stopCounter >= stopDelay){
         isMoving = false;
         animCorretion = 0.f;
     }
+}
+
+// Use gravity to apply character's falling
+void character::applyGravity(float deltaTime){
+    velocity.y += gravity;
+    worldPos.y += velocity.y * deltaTime;
 }
 
 // All character's movements
@@ -80,7 +111,7 @@ void character::moveCharacter(float deltaTime){
     updateFrame(deltaTime);
 
     // Check character's velocity
-    if (velocity.x != 0.0){
+    if (Vector2Length(velocity) != 0.0){
 
         Vector2 scaledVelocity;
 
@@ -107,32 +138,8 @@ void character::moveCharacter(float deltaTime){
     velocity = {};
 }
 
-void character::renderCharacter(){
-    Rectangle source{width * frame, 0.f, width * rightLeft, height};
-    Rectangle dest{worldPos.x - animCorretion, worldPos.y, scale * width, scale * height};
-    DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
-}
-
-void character::tick(float deltaTime){
-
-    // Testing
-    Rectangle testCol = getCollisionRec();
-    if(actualTex.id == idleTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
-    if(actualTex.id == runTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
-    if(actualTex.id == fallTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, GREEN);
-
-    moveCharacter(deltaTime);
-
-    if(!isOnGround)
-        applyGravity(deltaTime);
-    else
-        velocity = {};
-
-    renderCharacter();
-}
+// Change position to previous character's position
+void character::undoMovement(){ worldPos = worldPosLast; }
 
 Rectangle character::getCollisionRec(){
     // Return the rectangle based on character's actual animation
@@ -155,6 +162,7 @@ Rectangle character::getCollisionRec(){
     return characterRec;
 }
 
+// If the character touches the ground, they are snapped to their top edge
 void character::snapToGround(Rectangle ground){
     if(isOnGround){
         worldPos.y = ground.y - height * scale + paddingY + 3;
@@ -162,14 +170,16 @@ void character::snapToGround(Rectangle ground){
     }
 }
 
+// Check character's collision with terrain from the top
 void character::checkTopCollision(Rectangle terrainCollision){
+
     // Auxiliary variables to calculate character down edge and top edge of terrain
     float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
     float terrainTop = terrainCollision.y + 8;
 
     // Check kollision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
-        characterBottom <= terrainTop){
+        characterBottom <= terrainTop && !isInJump){
             isOnGround = true;
             snapToGround(terrainCollision);
         }
@@ -179,7 +189,5 @@ void character::checkTopCollision(Rectangle terrainCollision){
     DrawText(TextFormat("Ground: %s", isOnGround ? "TRUE" : "FALSE"), 0,0,20, RED);
 }
 
-void character::applyGravity(float deltaTime){
-    velocity.y += gravity;
-    worldPos.y += velocity.y * deltaTime;
-}
+// Return charater world position
+Vector2 character::getWorldPos(){ return worldPos; }

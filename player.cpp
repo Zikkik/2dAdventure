@@ -24,17 +24,21 @@ player::player(float winWidth, float winHeight) :
     rightLeft = {1.f};
 
     // Jump variables
-    jumpForce = {-600.f};
+    jumpForce = {-800.f};
+    jumpTime = {0.f};
+    maxJumpTime = {1.0f};
 }
 
+// Player tick
 void player::tick(float deltaTime){
     bool wasOnGround = isOnGround;
 
     // Keyboard movement
     if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
     if(IsKeyDown(KEY_D)) velocity.x += 1.f;
-    if(IsKeyDown(KEY_W) && isOnGround) jump();
+    if(IsKeyDown(KEY_W) && isOnGround) isInJump = true;
 
+    if(isInJump) jump(deltaTime);
     updateTex();
     character::tick(deltaTime);
 
@@ -79,6 +83,17 @@ Rectangle player::getCollisionRec(){
     return characterRec;
 }
 
-void player::jump(){
-    velocity.y = jumpForce;
+// Jump method
+void player::jump(float deltaTime){
+    isOnGround = false;
+
+    jumpTime += deltaTime;
+    if(jumpTime <= maxJumpTime){
+        velocity.y = jumpForce;
+        jumpForce = jumpForce + 15;
+    } else {
+        isInJump = false;
+        jumpForce = -600.f;
+        jumpTime = 0.f;
+    }
 }

@@ -5,6 +5,7 @@ class character{
         // Flags
         bool isMoving;
         bool isOnGround;
+        bool isInJump;
 
         // Animation variables
         int frame;                  
@@ -52,11 +53,11 @@ class character{
         void changeDirection();
         void animChangeDelay(float deltaTime);
 
-        // Return charater world position
-        Vector2 getWorldPos();
-
         // Collision
         virtual Rectangle getCollisionRec();
         void snapToGround(Rectangle ground);
         void checkTopCollision(Rectangle terrainCollision);
+    
+        // Return charater world position
+        Vector2 getWorldPos();
 };
