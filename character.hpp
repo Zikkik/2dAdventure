@@ -43,12 +43,14 @@ class character{
         // Movement methods
         void applyGravity(float deltaTime);
         void moveCharacter(float deltaTime);
-        void characterFalling();
         void undoMovement();
 
         // Texture managment
         virtual void updateTex();
         void renderCharacter();
+        void updateFrame(float deltaTime);
+        void changeDirection();
+        void animChangeDelay(float deltaTime);
 
         // Return charater world position
         Vector2 getWorldPos();

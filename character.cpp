@@ -42,9 +42,8 @@ void character::updateTex(){
     width = actualTex.width / maxFrames;
 }
 
-void character::moveCharacter(float deltaTime){
-    worldPosLast = worldPos;
-
+// Updete actual frame in character's sprite
+void character::updateFrame(float deltaTime){
     // Time between animation frames
     runningTime += deltaTime;
     if(runningTime >= updateTime){
@@ -52,33 +51,55 @@ void character::moveCharacter(float deltaTime){
         runningTime = 0;
         if(frame >= maxFrames) frame = 0;
     }
+}
+
+// Change texture direction
+void character::changeDirection(){
+    if(velocity.x < 0.f) {
+        rightLeft = -1.f;
+        animCorretion = 0.f;
+    } else if(velocity.x > 0.f) {
+        rightLeft = 1.f;
+        // Animation correction
+        animCorretion = width / 2;
+    }
+}
+
+void character::animChangeDelay(float deltaTime){
+    stopCounter += deltaTime;
+    if(stopCounter >= stopDelay){
+        isMoving = false;
+        animCorretion = 0.f;
+    }
+}
+
+// All character's movements
+void character::moveCharacter(float deltaTime){
+    worldPosLast = worldPos;
+
+    updateFrame(deltaTime);
 
     // Check character's velocity
-    if (Vector2Length(velocity) != 0.0){
-        
+    if (velocity.x != 0.0){
+
+        Vector2 scaledVelocity;
+
+        // Vertical movement depends on ground state
+        if(isOnGround)
+            scaledVelocity = {Vector2Normalize(velocity).x * speed * deltaTime, velocity.y * deltaTime};
+        else
+            scaledVelocity = {velocity.x * speed / 2 * deltaTime, velocity.y * deltaTime};
+
         // Update world position
-        Vector2 scaledVelocity = {Vector2Normalize(velocity).x * speed * deltaTime, velocity.y * deltaTime};
         worldPos = Vector2Add(worldPos, scaledVelocity);
 
-        // Change texture direction
-        if(velocity.x < 0.f) {
-            rightLeft = -1.f;
-            animCorretion = 0.f;
-        } else {
-            rightLeft = 1.f;
-            // Animation correction
-            animCorretion = width / 2;
-        }
+        changeDirection();
 
+        // Update character's variables
         stopCounter = 0.f;
         isMoving = true;
-    } else {
-        stopCounter += deltaTime;
-        if(stopCounter >= stopDelay){
-            isMoving = false;
-            animCorretion = 0.f;
-        }
-    }
+    } else 
+        animChangeDelay(deltaTime);
 
     updateTex();
 
@@ -87,9 +108,9 @@ void character::moveCharacter(float deltaTime){
 }
 
 void character::renderCharacter(){
-        Rectangle source{width * frame, 0.f, width * rightLeft, height};
-        Rectangle dest{worldPos.x - animCorretion, worldPos.y, scale * width, scale * height};
-        DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
+    Rectangle source{width * frame, 0.f, width * rightLeft, height};
+    Rectangle dest{worldPos.x - animCorretion, worldPos.y, scale * width, scale * height};
+    DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
 }
 
 void character::tick(float deltaTime){
@@ -100,8 +121,11 @@ void character::tick(float deltaTime){
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
     if(actualTex.id == runTex.id)
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
+    if(actualTex.id == fallTex.id)
+        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, GREEN);
 
     moveCharacter(deltaTime);
+
     if(!isOnGround)
         applyGravity(deltaTime);
     else
@@ -139,27 +163,23 @@ void character::snapToGround(Rectangle ground){
 }
 
 void character::checkTopCollision(Rectangle terrainCollision){
-    // Auxiliary variables
+    // Auxiliary variables to calculate character down edge and top edge of terrain
     float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
     float terrainTop = terrainCollision.y + 8;
 
     // Check kollision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
-        characterBottom <= terrainTop)
-        isOnGround = true;
+        characterBottom <= terrainTop){
+            isOnGround = true;
+            snapToGround(terrainCollision);
+        }
     else 
         isOnGround = false;
 
     DrawText(TextFormat("Ground: %s", isOnGround ? "TRUE" : "FALSE"), 0,0,20, RED);
-
-    snapToGround(terrainCollision);
 }
 
 void character::applyGravity(float deltaTime){
     velocity.y += gravity;
     worldPos.y += velocity.y * deltaTime;
-}
-
-void character::characterFalling(){
-
 }

@@ -5,7 +5,11 @@ class player : public character{
     private:
         // Jump variables (unique for player)
         Texture2D jumpTex;
-        int jumpVelocity;
+        float jumpForce;
+
+        // Landing variables (for animation)
+        float landingTimer;
+        float landingDuration;
 
         // Window size
         float windowWidth;
@@ -21,4 +25,7 @@ class player : public character{
 
         // Overrided collision rectangle
         virtual Rectangle getCollisionRec();
+
+        // Jump function
+        void jump();
 };

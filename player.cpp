@@ -13,7 +13,7 @@ player::player(float winWidth, float winHeight) :
     actualTex = idleTex;
 
     // World position
-    worldPos = {winWidth/2, winHeight/2};
+    worldPos = {winWidth/2, 0};
 
     // Character size
     height = actualTex.height;
@@ -22,27 +22,49 @@ player::player(float winWidth, float winHeight) :
     // Movement variables
     speed = {200.f};
     rightLeft = {1.f};
+
+    // Jump variables
+    jumpForce = {-600.f};
 }
 
 void player::tick(float deltaTime){
+    bool wasOnGround = isOnGround;
+
     // Keyboard movement
     if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
     if(IsKeyDown(KEY_D)) velocity.x += 1.f;
+    if(IsKeyDown(KEY_W) && isOnGround) jump();
 
     updateTex();
     character::tick(deltaTime);
+
+    if (!wasOnGround && isOnGround)
+        landingTimer = 0.f;
 }
 
 void player::updateTex(){
     if(!isOnGround){
         actualTex = fallTex;
         maxFrames = 3;
+        frame = 0;
         width = actualTex.width / maxFrames;
-    } else {
+        landingTimer = 0.f;
+
+    } else if (landingTimer < landingDuration) {
+        actualTex = fallTex;
+        maxFrames = 3;
+        frame = static_cast<int>((landingTimer / landingDuration) * 2.f);
+
+        if(frame >  2) frame = 2;
+
+        width = actualTex.width / maxFrames;
+        landingTimer += GetFrameTime();
+
+    } else
         character::updateTex();
-    }   
 }
 
+// Fall collision
 Rectangle player::getCollisionRec(){
         if(actualTex.id == fallTex.id)
             characterRec = {
@@ -55,4 +77,8 @@ Rectangle player::getCollisionRec(){
             character::getCollisionRec();
     
     return characterRec;
+}
+
+void player::jump(){
+    velocity.y = jumpForce;
 }
