@@ -31,69 +31,57 @@ player::player(float winWidth, float winHeight) :
 
 // Player tick
 void player::tick(float deltaTime){
-    bool wasOnGround = isOnGround;
 
     // Keyboard movement
     if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
     if(IsKeyDown(KEY_D)) velocity.x += 1.f;
-    if(IsKeyDown(KEY_W) && isOnGround) isInJump = true;
+    if(IsKeyDown(KEY_W) && isOnGround) {
+        isInJump = true;
+        frame = 0;
+    }
 
-    if(isInJump) jump(deltaTime);
+    if(isInJump && !jumpCeiling) jump(deltaTime);
     updateTex();
     character::tick(deltaTime);
-
-    if (!wasOnGround && isOnGround)
-        landingTimer = 0.f;
 }
 
 void player::updateTex(){
-    if(!isOnGround){
-        actualTex = fallTex;
-        maxFrames = 3;
-        frame = 0;
-        width = actualTex.width / maxFrames;
-        landingTimer = 0.f;
 
-    } else if (landingTimer < landingDuration) {
-        actualTex = fallTex;
-        maxFrames = 3;
-        frame = static_cast<int>((landingTimer / landingDuration) * 2.f);
-
-        if(frame >  2) frame = 2;
-
-        width = actualTex.width / maxFrames;
-        landingTimer += GetFrameTime();
-
+    if(isInJump && !isOnGround){
+        if(!isOnGround){
+            actualTex = jumpTex;
+            maxFrames = 15;
+            height = jumpTex.height;
+            width = jumpTex.width / maxFrames;
+        }
     } else
         character::updateTex();
 }
 
 // Fall collision
 Rectangle player::getCollisionRec(){
-        if(actualTex.id == fallTex.id)
+        if(actualTex.id == jumpTex.id)
             characterRec = {
-                worldPos.x + paddingX - width / 4,
+                worldPos.x + paddingX,
                 worldPos.y + paddingY,
                 width * scale - paddingX * 2,
                 height * scale - paddingY * 2
             };
         else
             character::getCollisionRec();
-    
     return characterRec;
 }
 
 // Jump method
 void player::jump(float deltaTime){
-    isOnGround = false;
-
     jumpTime += deltaTime;
+
     if(jumpTime <= maxJumpTime){
         velocity.y = jumpForce;
         jumpForce = jumpForce + 15;
     } else {
-        isInJump = false;
-        jumpForce = -600.f;
+        jumpCeiling = true;
+        jumpForce = -800.f;
         jumpTime = 0.f;
     }
 }

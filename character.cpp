@@ -5,6 +5,7 @@ character::character(){
     // Flags
     isMoving = false;
     isOnGround = false;
+    jumpCeiling = false;
     isInJump = false;
 
     // Animation variables
@@ -14,14 +15,14 @@ character::character(){
     stopCounter = {0.f};
     runningTime = {0.f};
     updateTime = {1.f / 8.f};
-    animCorretion = {0.f};
+    animCorrection = {0.f};
 
     // Collision variables
     paddingX = {65.f};
     paddingY = {50.f};
 
     // Gravity
-    gravity = {100.0f};
+    gravity = {200.0f};
 }
 
 // Character tick
@@ -38,7 +39,7 @@ void character::tick(float deltaTime){
 
     moveCharacter(deltaTime);
 
-    if(!isOnGround && !isInJump)
+    if(!isOnGround)
         applyGravity(deltaTime);
     else
         velocity = {};
@@ -51,9 +52,11 @@ void character::updateTex(){
     if (isMoving){
         actualTex = runTex;
         maxFrames = 8;
+        height = runTex.height;
     } else {
         actualTex = idleTex;
         maxFrames = 4;
+        height = idleTex.height;
     }
 
     width = actualTex.width / maxFrames;
@@ -62,7 +65,7 @@ void character::updateTex(){
 // Display character sprite in the window
 void character::renderCharacter(){
     Rectangle source{width * frame, 0.f, width * rightLeft, height};
-    Rectangle dest{worldPos.x - animCorretion, worldPos.y, scale * width, scale * height};
+    Rectangle dest{worldPos.x - animCorrection, worldPos.y, scale * width, scale * height};
     DrawTexturePro(actualTex, source, dest, Vector2{}, 0.f, WHITE);
 }
 
@@ -79,13 +82,29 @@ void character::updateFrame(float deltaTime){
 
 // Change texture direction
 void character::changeDirection(){
-    if(velocity.x < 0.f) {
-        rightLeft = -1.f;
-        animCorretion = 0.f;
-    } else if(velocity.x > 0.f) {
-        rightLeft = 1.f;
-        // Animation correction
-        animCorretion = width / 2;
+    if(isOnGround){
+        if(velocity.x < 0.f) {
+        // On ground left
+            rightLeft = -1.f;
+            animCorrection = 0.f;
+        } else if(velocity.x > 0.f) {
+        // On ground right
+            rightLeft = 1.f;
+            animCorrection = width / 2;
+        }
+    } 
+    
+    if(isInJump){
+        animCorrection = width / 4;
+        // During jump left
+        if(velocity.x < 0.f) {
+            rightLeft = -1.f;
+            animCorrection = width / 4;
+        // During jump right
+        } else if(velocity.x > 0.f || rightLeft == 1.f) {
+            rightLeft = 1.f;
+            animCorrection = -width / 2.5;
+        }
     }
 }
 
@@ -94,7 +113,7 @@ void character::animChangeDelay(float deltaTime){
     stopCounter += deltaTime;
     if(stopCounter >= stopDelay){
         isMoving = false;
-        animCorretion = 0.f;
+        animCorrection = 0.f;
     }
 }
 
@@ -128,7 +147,7 @@ void character::moveCharacter(float deltaTime){
 
         // Update character's variables
         stopCounter = 0.f;
-        isMoving = true;
+        if(velocity.x != 0) isMoving = true;
     } else 
         animChangeDelay(deltaTime);
 
@@ -179,14 +198,17 @@ void character::checkTopCollision(Rectangle terrainCollision){
 
     // Check kollision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
-        characterBottom <= terrainTop && !isInJump){
+        characterBottom <= terrainTop){
             isOnGround = true;
+            isInJump = false;
+            jumpCeiling = false;
             snapToGround(terrainCollision);
-        }
-    else 
-        isOnGround = false;
+        } else 
+            isOnGround = false;
 
     DrawText(TextFormat("Ground: %s", isOnGround ? "TRUE" : "FALSE"), 0,0,20, RED);
+    DrawText(TextFormat("Ground: %2.f", characterBottom), 0,80,20, RED);
+    DrawText(TextFormat("Ground: %2.f", terrainTop), 0,100,20, RED);
 }
 
 // Return charater world position

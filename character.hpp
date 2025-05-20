@@ -5,12 +5,13 @@ class character{
         // Flags
         bool isMoving;
         bool isOnGround;
+        bool jumpCeiling;
         bool isInJump;
 
         // Animation variables
         int frame;                  
         int maxFrames;
-        float animCorretion;     
+        float animCorrection;     
         float rightLeft;   
         float runningTime; 
         float stopDelay;
