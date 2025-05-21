@@ -14,10 +14,11 @@ int main() {
 
     // Setup background
     background firstBackground(0.f, 0.f);
+    background secondBackground(firstBackground.getBackgroundRec().width, 0.f);
 
     // Test terrain
     Texture2D terrainTex = LoadTexture("data/terrain/1.png");
-    Vector2 terrainPos{windowDimensions[0] / 2 - terrainTex.width, windowDimensions[1] - 20};
+    Vector2 terrainPos{-500.f, windowDimensions[1] - 20};
     terrain testTerrain(terrainPos, terrainTex);
 
     // Test player
@@ -46,6 +47,8 @@ int main() {
 
         // Camera following player in X
         camera.target.x = testPlayer.getWorldPos().x;
+        cameraView.x = camera.target.x - camera.offset.x;
+
         
         BeginDrawing();
 
@@ -54,9 +57,23 @@ int main() {
             BeginMode2D(camera);
 
                 // Draw background
-                firstBackground.display();
-                
-                //DrawTextureEx(background, backgroundPos2, 0.f, mapScale, WHITE);
+                secondBackground.display();
+
+                if(CheckCollisionRecs(firstBackground.getBackgroundRec(), cameraView))
+                    firstBackground.display();
+                else if (cameraView.x > firstBackground.getBackgroundPos().x){
+                    firstBackground.updatePos(secondBackground.getBackgroundPos().x + secondBackground.getBackgroundRec().width, 0.f);
+                } else if (cameraView.x < firstBackground.getBackgroundPos().x){
+                    firstBackground.updatePos(secondBackground.getBackgroundPos().x - secondBackground.getBackgroundRec().width, 0.f);
+                }
+
+                if(CheckCollisionRecs(secondBackground.getBackgroundRec(), cameraView))
+                    secondBackground.display();
+                else if (cameraView.x > secondBackground.getBackgroundPos().x){
+                    secondBackground.updatePos(firstBackground.getBackgroundPos().x + firstBackground.getBackgroundRec().width, 0.f);
+                } else if (cameraView.x < secondBackground.getBackgroundPos().x){
+                    secondBackground.updatePos(firstBackground.getBackgroundPos().x - firstBackground.getBackgroundRec().width, 0.f);
+                }
 
 
                 // Draw test terrain with collision rectangle
@@ -79,6 +96,10 @@ int main() {
 
             EndMode2D();
 
+            if(CheckCollisionRecs(firstBackground.getBackgroundRec(), cameraView))
+                DrawText("TRUE", 200, 200, 50, RED);
+            else
+                DrawText("FALSE", 200, 200, 50, RED);
 
         EndDrawing();
     }

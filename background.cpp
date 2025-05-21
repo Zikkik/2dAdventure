@@ -1,7 +1,7 @@
 #include "background.hpp"
 
 background::background(float posX, float posY){
-    backgroundScale = {1.f};
+    backgroundScale = {4.f};
     backgroundTex = {LoadTexture("data/map/background.png")};
     backgroundPos = {posX, posY};
 }
