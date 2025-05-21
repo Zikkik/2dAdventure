@@ -213,3 +213,6 @@ void character::checkTopCollision(Rectangle terrainCollision){
 
 // Return charater world position
 Vector2 character::getWorldPos(){ return worldPos; }
+
+// Return character size
+Vector2 character::getSize() { return Vector2{width, height}; }

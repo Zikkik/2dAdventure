@@ -9,7 +9,7 @@ terrain::terrain(Vector2 pos, Texture2D tex):
 }
 
 void terrain::renderTerrain(){
-    DrawTextureEx(terrainTex, worldPos, 0.f, scale, WHITE);
+    DrawTextureEx(terrainTex, worldPos, 0.f, scale * 10, WHITE);
 }
 
 Rectangle terrain::getCollisionRec(){
@@ -21,7 +21,7 @@ Rectangle terrain::getCollisionRec(){
     return Rectangle{
         worldPos.x + paddingX / 2,
         worldPos.y + paddingY / 2,
-        terrainTex.width * scale - paddingX,
+        terrainTex.width * scale * 10 - paddingX,
         terrainTex.height * scale - paddingY
     };
 }

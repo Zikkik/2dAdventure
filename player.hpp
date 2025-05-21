@@ -29,6 +29,6 @@ class player : public character{
         // Overrided collision rectangle
         virtual Rectangle getCollisionRec();
 
-        // Jump function
+        // Jump method
         void jump(float deltaTime);
 };

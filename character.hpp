@@ -59,6 +59,7 @@ class character{
         void snapToGround(Rectangle ground);
         void checkTopCollision(Rectangle terrainCollision);
     
-        // Return charater world position
+        // Getters
         Vector2 getWorldPos();
+        Vector2 getSize();
 };

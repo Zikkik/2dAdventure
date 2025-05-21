@@ -13,7 +13,7 @@ player::player(float winWidth, float winHeight) :
     actualTex = idleTex;
 
     // World position
-    worldPos = {winWidth/2, 0};
+    worldPos = { winWidth / 2, 0 };
 
     // Character size
     height = actualTex.height;
