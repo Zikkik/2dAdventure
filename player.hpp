@@ -1,4 +1,3 @@
-#include <cmath>
 #include "raylib.h"
 #include "character.hpp"
 

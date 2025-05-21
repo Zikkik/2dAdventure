@@ -1,5 +1,4 @@
 #include "character.hpp"
-#include "raymath.h"
 
 character::character(){
     // Flags
@@ -216,3 +215,6 @@ Vector2 character::getWorldPos(){ return worldPos; }
 
 // Return character size
 Vector2 character::getSize() { return Vector2{width, height}; }
+
+// Return character direction
+float character::getDirection() { return rightLeft; }

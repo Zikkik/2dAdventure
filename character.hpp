@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 class character{
     protected:
@@ -62,4 +63,5 @@ class character{
         // Getters
         Vector2 getWorldPos();
         Vector2 getSize();
+        float getDirection();
 };
