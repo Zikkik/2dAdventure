@@ -13,14 +13,14 @@ player::player(float winWidth, float winHeight) :
     actualTex = idleTex;
 
     // World position
-    worldPos = { winWidth / 2, 0 };
+    worldPos = {winWidth / 2, 0};
 
     // Character size
     height = actualTex.height;
     scale = {3.f};
 
     // Movement variables
-    speed = {200.f};
+    speed = {500.f};
     rightLeft = {1.f};
 
     // Attack variables
@@ -38,28 +38,45 @@ player::player(float winWidth, float winHeight) :
 void player::tick(float deltaTime){
 
     // Keyboard movement
-    if(IsKeyDown(KEY_A)) velocity.x -= 1.f;
-    if(IsKeyDown(KEY_D)) velocity.x += 1.f;
+    if(IsKeyDown(KEY_A) && !isInAttack) velocity.x -= 1.f;
+    if(IsKeyDown(KEY_D) && !isInAttack) velocity.x += 1.f;
+    if(IsKeyPressed(KEY_SPACE)){
+        isInAttack = true;
+        frame = 0;
+    }
+
     if(IsKeyDown(KEY_W) && isOnGround) {
         isInJump = true;
         frame = 0;
     }
 
+    // Test
+    if(actualTex.id == attackTex.id)
+        DrawRectangleLinesEx(getCollisionRec(), 1.f, BLACK);
+    if(actualTex.id == jumpTex.id)
+        DrawRectangleLinesEx(getCollisionRec(), 1.f, BLACK);
+
     if(isInJump && !jumpCeiling) jump(deltaTime);
-    updateTex();
+
     character::tick(deltaTime);
 }
 
-
 // Overrided updateTex
 void player::updateTex(){
-    if(isInJump && !isOnGround){
-        if(!isOnGround){
-            actualTex = jumpTex;
-            maxFrames = 15;
-            height = jumpTex.height;
-            width = jumpTex.width / maxFrames;
-        }
+    if(isInAttack){
+        actualTex = attackTex;
+        maxFrames = 8;
+        height = attackTex.height;
+        width = attackTex.width / maxFrames;
+        if (frame >= maxFrames - 1)
+            isInAttack = false;
+
+    } else if(isInJump && !isOnGround){
+        actualTex = jumpTex;
+        maxFrames = 15;
+        height = jumpTex.height;
+        width = jumpTex.width / maxFrames;
+
     } else
         character::updateTex();
 }
@@ -67,22 +84,37 @@ void player::updateTex(){
 // Overrided changeDirection
 void player::changeDirection(){
     if(isInJump){
-        animCorrection = width / 4;
-
         // During jump left
-        if(velocity.x < 0.f) {
-            rightLeft = -1.f;
+        if(rightLeft == -1.f) {
             animCorrection = width / 4;
         // During jump right
-        } else if(velocity.x > 0.f || rightLeft == 1.f) {
-            rightLeft = 1.f;
+        } else {
             animCorrection = -width / 2.5;
         }
+
+    } else if(isInAttack){
+        // During attack left
+        if(rightLeft == -1.f) 
+            animCorrection = width / 3.5;
+
+        // During attack right
+        else if(rightLeft == 1.f) 
+            animCorrection = width / 2.5;
+
     } else
         character::changeDirection();
 }
 
-// Fall collision
+void player::updateFrame(float deltaTime){
+    if(isInAttack)
+        updateTime = 1.f / 10.f;
+    else
+        updateTime = 1.f / 8.f;
+
+    character::updateFrame(deltaTime);
+}
+
+// Player collisions
 Rectangle player::getCollisionRec(){
         if(actualTex.id == jumpTex.id)
             characterRec = {
@@ -91,8 +123,17 @@ Rectangle player::getCollisionRec(){
                 width * scale - paddingX * 2,
                 height * scale - paddingY * 2
             };
-        else
-            character::getCollisionRec();
+
+        if(actualTex.id == attackTex.id)
+            characterRec = {
+                worldPos.x + paddingX,
+                worldPos.y + paddingY,
+                width * scale - paddingX * 3,
+                height * scale - paddingY * 2
+            };
+
+        character::getCollisionRec();
+
     return characterRec;
 }
 
@@ -125,4 +166,8 @@ void player::jump(float deltaTime){
         jumpForce = -800.f;
         jumpTime = 0.f;
     }
+}
+
+void player::attack(float deltaTime){
+    isInAttack = true;
 }

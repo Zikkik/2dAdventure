@@ -15,13 +15,10 @@ class player : public character{
         Texture2D attackTex;
         bool isInAttack;
 
-        // Landing variables (for animation)
-        float landingTimer;
-        float landingDuration;
-
         // Window size
         float windowWidth;
         float windowHeight;
+
     public:
         player(float winWidth, float winHeight);
 
@@ -31,6 +28,7 @@ class player : public character{
         // Overrided texture managment
         virtual void updateTex() override;
         virtual void changeDirection() override;
+        virtual void updateFrame(float deltaTime) override;
 
         // Overrided collision methods
         virtual Rectangle getCollisionRec();
@@ -38,4 +36,7 @@ class player : public character{
 
         // Jump method
         void jump(float deltaTime);
+
+        // Attack method
+        void attack(float deltaTime);
 };

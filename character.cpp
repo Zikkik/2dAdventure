@@ -125,13 +125,13 @@ void character::moveCharacter(float deltaTime){
         // Update world position
         worldPos = Vector2Add(worldPos, scaledVelocity);
 
-        changeDirection();
-
         // Update character's variables
         stopCounter = 0.f;
         if(velocity.x != 0) isMoving = true;
     } else 
         animChangeDelay(deltaTime);
+
+    changeDirection();
 
     updateTex();
 

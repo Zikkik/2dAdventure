@@ -48,7 +48,7 @@ class character{
         // Texture managment
         virtual void updateTex();
         void renderCharacter();
-        void updateFrame(float deltaTime);
+        virtual void updateFrame(float deltaTime);
         virtual void changeDirection();
         void animChangeDelay(float deltaTime);
 
