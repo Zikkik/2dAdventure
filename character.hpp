@@ -6,8 +6,6 @@ class character{
         // Flags
         bool isMoving;
         bool isOnGround;
-        bool jumpCeiling;
-        bool isInJump;
 
         // Animation variables
         int frame;                  
@@ -26,7 +24,6 @@ class character{
         Texture2D actualTex;
         Texture2D idleTex;
         Texture2D runTex;
-        Texture2D fallTex;
 
         // Movement variables
         float speed;
@@ -52,7 +49,7 @@ class character{
         virtual void updateTex();
         void renderCharacter();
         void updateFrame(float deltaTime);
-        void changeDirection();
+        virtual void changeDirection();
         void animChangeDelay(float deltaTime);
 
         // Collision

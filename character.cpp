@@ -2,10 +2,8 @@
 
 character::character(){
     // Flags
-    isMoving = false;
-    isOnGround = false;
-    jumpCeiling = false;
-    isInJump = false;
+    isMoving = {false};
+    isOnGround = {false};
 
     // Animation variables
     frame = {};
@@ -33,8 +31,6 @@ void character::tick(float deltaTime){
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
     if(actualTex.id == runTex.id)
         DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
-    if(actualTex.id == fallTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, GREEN);
 
     moveCharacter(deltaTime);
 
@@ -92,19 +88,6 @@ void character::changeDirection(){
             animCorrection = width / 2;
         }
     } 
-    
-    if(isInJump){
-        animCorrection = width / 4;
-        // During jump left
-        if(velocity.x < 0.f) {
-            rightLeft = -1.f;
-            animCorrection = width / 4;
-        // During jump right
-        } else if(velocity.x > 0.f || rightLeft == 1.f) {
-            rightLeft = 1.f;
-            animCorrection = -width / 2.5;
-        }
-    }
 }
 
 // Delay for smoother texture changes
@@ -195,19 +178,13 @@ void character::checkTopCollision(Rectangle terrainCollision){
     float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
     float terrainTop = terrainCollision.y + 8;
 
-    // Check kollision with terrain and top edge
+    // Check collision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
         characterBottom <= terrainTop){
             isOnGround = true;
-            isInJump = false;
-            jumpCeiling = false;
             snapToGround(terrainCollision);
         } else 
             isOnGround = false;
-
-    DrawText(TextFormat("Ground: %s", isOnGround ? "TRUE" : "FALSE"), 0,0,20, RED);
-    DrawText(TextFormat("Ground: %2.f", characterBottom), 0,80,20, RED);
-    DrawText(TextFormat("Ground: %2.f", terrainTop), 0,100,20, RED);
 }
 
 // Return charater world position

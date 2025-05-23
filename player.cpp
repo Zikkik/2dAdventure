@@ -9,7 +9,7 @@ player::player(float winWidth, float winHeight) :
     idleTex = LoadTexture("data/animation/character-idle.png");
     runTex = LoadTexture("data/animation/character-run.png");
     jumpTex = LoadTexture("data/animation/character-jump.png");
-    fallTex = LoadTexture("data/animation/character-fall.png");
+    attackTex = LoadTexture("data/animation/character-attack.png");
     actualTex = idleTex;
 
     // World position
@@ -23,10 +23,15 @@ player::player(float winWidth, float winHeight) :
     speed = {200.f};
     rightLeft = {1.f};
 
+    // Attack variables
+    isInAttack = {false};
+
     // Jump variables
     jumpForce = {-800.f};
     jumpTime = {0.f};
     maxJumpTime = {1.0f};
+    jumpCeiling = {false};
+    isInJump = {false};
 }
 
 // Player tick
@@ -45,8 +50,9 @@ void player::tick(float deltaTime){
     character::tick(deltaTime);
 }
 
-void player::updateTex(){
 
+// Overrided updateTex
+void player::updateTex(){
     if(isInJump && !isOnGround){
         if(!isOnGround){
             actualTex = jumpTex;
@@ -56,6 +62,24 @@ void player::updateTex(){
         }
     } else
         character::updateTex();
+}
+
+// Overrided changeDirection
+void player::changeDirection(){
+    if(isInJump){
+        animCorrection = width / 4;
+
+        // During jump left
+        if(velocity.x < 0.f) {
+            rightLeft = -1.f;
+            animCorrection = width / 4;
+        // During jump right
+        } else if(velocity.x > 0.f || rightLeft == 1.f) {
+            rightLeft = 1.f;
+            animCorrection = -width / 2.5;
+        }
+    } else
+        character::changeDirection();
 }
 
 // Fall collision
@@ -70,6 +94,23 @@ Rectangle player::getCollisionRec(){
         else
             character::getCollisionRec();
     return characterRec;
+}
+
+void player::checkTopCollision(Rectangle terrainCollision){
+    
+    // Auxiliary variables to calculate character down edge and top edge of terrain
+    float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
+    float terrainTop = terrainCollision.y + 8;
+
+    // Check collision with terrain and top edge
+    if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
+        characterBottom <= terrainTop){
+            isOnGround = true;
+            isInJump = false;
+            jumpCeiling = false;
+            snapToGround(terrainCollision);
+        } else 
+            isOnGround = false;
 }
 
 // Jump method

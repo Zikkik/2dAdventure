@@ -48,8 +48,10 @@ int main() {
         // Camera following player in X
         camera.target.x = testPlayer.getWorldPos().x;
         cameraView.x = camera.target.x - camera.offset.x;
-
+        cameraView.width = windowDimensions[0];           //I have no idea why this line is necessary. Without it, nothing works — it's strange, and I don't want to know why that is.
         
+        DrawRectangleLinesEx(cameraView, 1.f, BLACK);
+
         BeginDrawing();
 
             ClearBackground(WHITE);
@@ -74,7 +76,6 @@ int main() {
                 } else if (cameraView.x < secondBackground.getBackgroundPos().x){
                     secondBackground.updatePos(firstBackground.getBackgroundPos().x - firstBackground.getBackgroundRec().width, 0.f);
                 }
-
 
                 // Draw test terrain with collision rectangle
                 testTerrain.renderTerrain();

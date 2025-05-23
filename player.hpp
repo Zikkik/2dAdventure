@@ -8,6 +8,12 @@ class player : public character{
         float jumpForce;
         float jumpTime;
         float maxJumpTime;
+        bool isInJump;
+        bool jumpCeiling;
+
+        // Attack variables (unique for player)
+        Texture2D attackTex;
+        bool isInAttack;
 
         // Landing variables (for animation)
         float landingTimer;
@@ -22,11 +28,13 @@ class player : public character{
         // Overrided tick from the character class
         virtual void tick(float deltaTime) override;
 
-        // Overrided texture update
+        // Overrided texture managment
         virtual void updateTex() override;
+        virtual void changeDirection() override;
 
-        // Overrided collision rectangle
+        // Overrided collision methods
         virtual Rectangle getCollisionRec();
+        virtual void checkTopCollision(Rectangle terrainCollision);
 
         // Jump method
         void jump(float deltaTime);
