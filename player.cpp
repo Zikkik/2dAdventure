@@ -83,22 +83,20 @@ void player::updateTex(){
 
 // Overrided changeDirection
 void player::changeDirection(){
+    // Jump animation correction
     if(isInJump){
-        // During jump left
-        if(rightLeft == -1.f) {
-            animCorrection = width / 4;
-        // During jump right
-        } else {
-            animCorrection = -width / 2.5;
-        }
 
+        if(rightLeft == -1.f) 
+            animCorrection = width / 4;
+        else 
+            animCorrection = -width / 2.5;
+
+    // Attack animation correction
     } else if(isInAttack){
-        // During attack left
+
         if(rightLeft == -1.f) 
             animCorrection = width / 3.5;
-
-        // During attack right
-        else if(rightLeft == 1.f) 
+        else
             animCorrection = width / 2.5;
 
     } else

@@ -77,16 +77,18 @@ void character::updateFrame(float deltaTime){
 
 // Change texture direction
 void character::changeDirection(){
-    if(isOnGround){
-        if(velocity.x < 0.f) {
-        // On ground left
-            rightLeft = -1.f;
+    // Change texture direction
+    if(velocity.x < 0.f) 
+        rightLeft = -1.f;
+    else if (velocity.x > 0.f)
+        rightLeft = 1.f;
+    
+    // Run animation correction
+    if(isMoving){
+        if(rightLeft == -1.f)
             animCorrection = 0.f;
-        } else if(velocity.x > 0.f) {
-        // On ground right
-            rightLeft = 1.f;
+        else 
             animCorrection = width / 2;
-        }
     } 
 }
 
