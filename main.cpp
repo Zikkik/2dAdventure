@@ -2,6 +2,7 @@
 #include "player.hpp"
 #include "terrain.hpp"
 #include "background.hpp"
+#include "boar.hpp"
 
 int main() {
     // Create new window for game (default fullscreen)
@@ -18,11 +19,14 @@ int main() {
 
     // Test terrain
     Texture2D terrainTex = LoadTexture("data/terrain/1.png");
-    Vector2 terrainPos{-500.f, windowDimensions[1] - 20};
+    Vector2 terrainPos = {-500.f, windowDimensions[1] - 20};
     terrain testTerrain(terrainPos, terrainTex);
 
     // Test player
     player testPlayer(windowDimensions[0], windowDimensions[1] / 3);
+
+    // Test boar
+    boar testBoar(windowDimensions[0] / 2, windowDimensions[1] / 3);
 
     // Camera setup
     Camera2D camera = {};
@@ -48,9 +52,7 @@ int main() {
         // Camera following player in X
         camera.target.x = testPlayer.getWorldPos().x;
         cameraView.x = camera.target.x - camera.offset.x;
-        cameraView.width = windowDimensions[0];           //I have no idea why this line is necessary. Without it, nothing works — it's strange, and I don't want to know why that is.
-        
-        DrawRectangleLinesEx(cameraView, 1.f, BLACK);
+        cameraView.width = windowDimensions[0];           // I have no idea why this line is necessary. Without it, nothing works — it's strange, and I don't want to know why that is.
 
         BeginDrawing();
 
@@ -90,17 +92,13 @@ int main() {
                 testPlayer.tick(deltaTime);
 
                 testPlayer.checkTopCollision(testTerrain.getCollisionRec());
-                
-                // Temporary collision check for tests
-                //if(CheckCollisionRecs(testTerrain.getCollisionRec(), testPlayer.getCollisionRec()))
-                //   testPlayer.undoMovement();
+
+                // Test boar tick
+                testBoar.tick(deltaTime);
+
+                testBoar.checkTopCollision(testTerrain.getCollisionRec());
 
             EndMode2D();
-
-            if(CheckCollisionRecs(firstBackground.getBackgroundRec(), cameraView))
-                DrawText("TRUE", 200, 200, 50, RED);
-            else
-                DrawText("FALSE", 200, 200, 50, RED);
 
         EndDrawing();
     }

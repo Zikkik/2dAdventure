@@ -23,16 +23,16 @@ class player : public character{
         player(float winWidth, float winHeight);
 
         // Overrided tick from the character class
-        virtual void tick(float deltaTime) override;
+        void tick(float deltaTime) override;
 
         // Overrided texture managment
-        virtual void updateTex() override;
-        virtual void changeDirection() override;
-        virtual void updateFrame(float deltaTime) override;
+        void updateTex() override;
+        void changeDirection() override;
+        void updateFrame(float deltaTime) override;
 
         // Overrided collision methods
-        virtual Rectangle getCollisionRec();
-        virtual void checkTopCollision(Rectangle terrainCollision);
+        Rectangle getCollisionRec() override;
+        void checkTopCollision(Rectangle terrainCollision) override;
 
         // Jump method
         void jump(float deltaTime);

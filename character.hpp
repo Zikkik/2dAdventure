@@ -1,3 +1,5 @@
+#ifndef CHARACTER_HPP
+#define CHARACTER_HPP
 #include "raylib.h"
 #include "raymath.h"
 
@@ -55,10 +57,12 @@ class character{
         // Collision
         virtual Rectangle getCollisionRec();
         void snapToGround(Rectangle ground);
-        void checkTopCollision(Rectangle terrainCollision);
+        virtual void checkTopCollision(Rectangle terrainCollision);
     
         // Getters
         Vector2 getWorldPos();
         Vector2 getSize();
         float getDirection();
 };
+
+#endif

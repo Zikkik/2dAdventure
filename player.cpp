@@ -103,6 +103,7 @@ void player::changeDirection(){
         character::changeDirection();
 }
 
+// Overrided updateFrame
 void player::updateFrame(float deltaTime){
     if(isInAttack)
         updateTime = 1.f / 10.f;
@@ -135,6 +136,7 @@ Rectangle player::getCollisionRec(){
     return characterRec;
 }
 
+// Overrided collision from top
 void player::checkTopCollision(Rectangle terrainCollision){
     
     // Auxiliary variables to calculate character down edge and top edge of terrain

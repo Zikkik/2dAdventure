@@ -34,10 +34,12 @@ void character::tick(float deltaTime){
 
     moveCharacter(deltaTime);
 
+    /*
     if(!isOnGround)
         applyGravity(deltaTime);
     else
         velocity = {};
+        */
 
     renderCharacter();
 }
