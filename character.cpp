@@ -136,9 +136,6 @@ void character::moveCharacter(float deltaTime){
     velocity = {};
 }
 
-// Change position to previous character's position
-void character::undoMovement(){ worldPos = worldPosLast; }
-
 Rectangle* character::getCollisionRec(){
     // Return the rectangle based on character's actual animation
     if(actualTex.id != runTex.id)
@@ -169,7 +166,7 @@ void character::snapToGround(Rectangle ground){
 }
 
 // Check character's collision with terrain from the top
-void character::checkTopCollision(Rectangle terrainCollision){
+bool character::checkTopCollision(Rectangle terrainCollision){
 
     // Auxiliary variables to calculate character down edge and top edge of terrain
     float characterBottom = worldPos.y + getCollisionRec()->height  + paddingY;
@@ -182,7 +179,11 @@ void character::checkTopCollision(Rectangle terrainCollision){
             snapToGround(terrainCollision);
         } else 
             isOnGround = false;
+    return false;
 }
+
+// Set isOnGround value
+void character::setOnGround(bool value){ isOnGround = value; }
 
 // Return charater world position
 Vector2 character::getWorldPos(){ return worldPos; }

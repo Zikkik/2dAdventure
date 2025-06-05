@@ -32,5 +32,5 @@ class boar : public character{
         void boarCharge();
         void boarPatrol(float pointA, float pointB);
         void chargeCheck(Rectangle *player);
-
+        void hittingPlayer();
 };

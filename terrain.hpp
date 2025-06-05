@@ -6,7 +6,8 @@ class terrain{
         Vector2 worldPos;
         float scale;
     public:
-        terrain(Vector2 pos, Texture2D tex);
+        terrain();
+        terrain(Vector2 pos, Texture2D tex, float scale);
 
         // Texture managment
         void renderTerrain();

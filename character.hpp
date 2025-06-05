@@ -53,7 +53,6 @@ class character{
         // Movement methods
         void applyGravity(float deltaTime);
         void moveCharacter(float deltaTime);
-        void undoMovement();
 
         // Texture managment
         virtual void updateTex();
@@ -65,7 +64,10 @@ class character{
         // Collision
         virtual Rectangle* getCollisionRec();
         void snapToGround(Rectangle ground);
-        virtual void checkTopCollision(Rectangle terrainCollision);
+        virtual bool checkTopCollision(Rectangle terrainCollision);
+
+        // Setters
+        void setOnGround(bool ter);
     
         // Getters
         Vector2 getWorldPos();

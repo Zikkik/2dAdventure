@@ -27,7 +27,7 @@ player::player(float winWidth, float winHeight) :
     isInAttack = {false};
 
     // Jump variables
-    jumpForce = {-800.f};
+    jumpForce = {-1200.f};
     jumpTime = {0.f};
     maxJumpTime = {1.0f};
     jumpCeiling = {false};
@@ -112,6 +112,9 @@ void player::changeDirection(){
 void player::updateFrame(float deltaTime){
     if(isInAttack)
         updateTime = 1.f / 10.f;
+
+    if(isInJump)
+        updateTime = 1.f / 5.f;
     else
         updateTime = 1.f / 8.f;
 
@@ -142,21 +145,22 @@ Rectangle* player::getCollisionRec(){
 }
 
 // Overrided collision from top
-void player::checkTopCollision(Rectangle terrainCollision){
+bool player::checkTopCollision(Rectangle terrainCollision){
     
     // Auxiliary variables to calculate character down edge and top edge of terrain
-    float characterBottom = worldPos.y + getCollisionRec()->height  + paddingY;
+    float characterBottom = getCollisionRec()->y + getCollisionRec()->height;
     float terrainTop = terrainCollision.y + 8;
 
     // Check collision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, *getCollisionRec()) && 
-        characterBottom <= terrainTop){
-            isOnGround = true;
+        characterBottom <= terrainTop + 5.f){
             isInJump = false;
             jumpCeiling = false;
             snapToGround(terrainCollision);
-        } else 
-            isOnGround = false;
+            return true;
+        } else
+            return false;
+
 }
 
 // Jump method
@@ -168,7 +172,7 @@ void player::jump(float deltaTime){
         jumpForce = jumpForce + 15;
     } else {
         jumpCeiling = true;
-        jumpForce = -800.f;
+        jumpForce = -1200.f;
         jumpTime = 0.f;
     }
 }

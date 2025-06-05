@@ -1,27 +1,30 @@
 #include "terrain.hpp"
 #include "raymath.h"
 
-terrain::terrain(Vector2 pos, Texture2D tex):
+terrain::terrain(){}
+
+terrain::terrain(Vector2 pos, Texture2D tex, float scale):
     terrainTex(tex),
-    worldPos(pos)
+    worldPos(pos),
+    scale(scale)
 {
     scale = {4.f};
 }
 
 void terrain::renderTerrain(){
-    DrawTextureEx(terrainTex, worldPos, 0.f, scale * 40, WHITE);
+    DrawTextureEx(terrainTex, worldPos, 0.f, scale, WHITE);
 }
 
 Rectangle terrain::getCollisionRec(){
     // Vertical and horizontal paddings
-    float paddingX = terrainTex.width / 2;
-    float paddingY = terrainTex.height / 2;
+    float paddingX = 20.f;
+    float paddingY = 10.f;
 
     // Return collision rectangle
     return Rectangle{
-        worldPos.x + paddingX / 2,
-        worldPos.y + paddingY / 2,
-        terrainTex.width * scale * 40 - paddingX,
-        terrainTex.height * scale - paddingY
+        worldPos.x + paddingX,
+        worldPos.y + paddingY,
+        terrainTex.width * scale - paddingX * 2,
+        terrainTex.height * scale
     };
 }
