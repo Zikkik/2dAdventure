@@ -7,6 +7,8 @@ class boar : public character{
     private:
         // Additional flags
         bool isInCharge;
+        bool isOnPatrol;
+        bool chargeTargetReached;
 
         // Additional Textures
         Texture2D walkTex;
@@ -26,7 +28,9 @@ class boar : public character{
         // Overrided texture managment
         void updateTex() override;
 
-        // Boar movement
+        // Boar mechanics
+        void boarCharge();
         void boarPatrol(float pointA, float pointB);
-        void boarCharge(Rectangle *player);
+        void chargeCheck(Rectangle *player);
+
 };

@@ -8,6 +8,8 @@ class character{
         // Flags
         bool isMoving;
         bool isOnGround;
+        bool recentlyDamaged;
+        bool isAlive;
 
         // Animation variables
         int frame;                  
@@ -42,7 +44,8 @@ class character{
         // Gameplay variables
         int health;
         int damage;
-        
+        float damageCooldown;
+
     public:
         character();
         virtual void tick(float deltaTime);
@@ -71,6 +74,8 @@ class character{
 
         // Gameplay
         void takeDamage(int amount);
+        void damageTimer(float deltaTime);
+        void aliveCheck();
 };
 
 #endif

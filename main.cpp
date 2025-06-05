@@ -97,6 +97,10 @@ int main() {
                 testBoar.tick(deltaTime);
 
                 testBoar.checkTopCollision(testTerrain.getCollisionRec());
+                testBoar.chargeCheck(testPlayer.getCollisionRec());
+
+                if(testPlayer.getAttackBool())
+                    testPlayer.attack(&testBoar);
 
             EndMode2D();
 

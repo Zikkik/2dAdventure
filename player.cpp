@@ -60,6 +60,9 @@ void player::tick(float deltaTime){
 
     if(isInJump && !jumpCeiling) jump(deltaTime);
 
+     DrawText(TextFormat("playerHealth: %.d", health), 100, 120, 20, GREEN);
+
+
     character::tick(deltaTime);
 }
 
@@ -170,6 +173,11 @@ void player::jump(float deltaTime){
     }
 }
 
-void player::attack(float deltaTime){
+void player::attack(character *enemy){
     isInAttack = true;
+
+    if(CheckCollisionRecs(*enemy->getCollisionRec(), *getCollisionRec()))
+        enemy->takeDamage(damage);
 }
+
+bool player::getAttackBool(){ return isInAttack; }

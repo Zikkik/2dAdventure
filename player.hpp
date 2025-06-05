@@ -1,3 +1,5 @@
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 #include "raylib.h"
 #include "character.hpp"
 
@@ -38,5 +40,10 @@ class player : public character{
         void jump(float deltaTime);
 
         // Attack method
-        void attack(float deltaTime);
+        void attack(character *enemy);
+
+        // Getters
+        bool getAttackBool();
 };
+
+#endif

@@ -10,6 +10,8 @@ boar::boar(float posX, float posY){
 
     // Flags
     isInCharge = {false};
+    isOnPatrol = {true};
+    chargeTargetReached = {false};
 
     // World position
     worldPos = {posX, posY};
@@ -35,42 +37,82 @@ boar::boar(float posX, float posY){
 }
 
 void boar::tick(float deltaTime){
-    boarPatrol(movementRangeLeft, movementRangeRight);
-    velocity.x = direction;
+    if(isAlive){
+        if(!recentlyDamaged){ 
+            if(isOnPatrol)
+                boarPatrol(movementRangeLeft, movementRangeRight);
 
-    DrawLine(movementRangeLeft, 0.f, movementRangeLeft, 1920.f, BLACK);
-    DrawLine(movementRangeRight, 0.f, movementRangeRight, 1920.f, BLACK);
+            if(isInCharge)
+                boarCharge();
+        }
 
-    character::tick(deltaTime);
+        character::tick(deltaTime);
+    }
+
+    DrawText(TextFormat("isAlive: %.s", isAlive ? "TRUE" : "FALSE"), 100, 100, 20, RED);
 }
 
 // Update the texture based on the movement animation
 void boar::updateTex(){
-    if (isMoving){
+    if (isOnPatrol){
         actualTex = walkTex;
         maxFrames = 6;
         height = walkTex.height;
-    } else if (isInCharge){
+    } 
+    
+    if (isInCharge){
         actualTex = runTex;
         maxFrames = 6;
         height = runTex.height;
     }
 
+    if (recentlyDamaged){
+        actualTex = vanishTex;
+        maxFrames = 4;
+        height = vanishTex.height;
+    }
+
     width = actualTex.width / maxFrames;
 }
 
-void boar::boarPatrol(float pointA, float pointB){
-    if(fabs(characterRec.x - pointA) < 5.f)
-        direction = {1.f};
-
-    if(fabs(characterRec.x + characterRec.width - pointB) < 5.f)
-        direction = {-1.f};
+// Change boar speed and lock direction
+void boar::boarCharge(){
+    speed = 400.f;
+    velocity.x = direction;
 }
 
-void boar::boarCharge(Rectangle *player){
+// Boar patrol space beetween two points
+void boar::boarPatrol(float pointA, float pointB){
+    speed = 250.f;
+
+    if(fabs(characterRec.x - pointA) < 5.f){
+        direction = {1.f};
+        if(isInCharge)
+            isInCharge = false;
+    }
+
+    if(fabs(characterRec.x + characterRec.width - pointB) < 5.f){
+        direction = {-1.f};
+        if(isInCharge)
+            isInCharge = false;
+    }
+
+    velocity.x = direction;
+}
+
+// Boar charge toward the player
+void boar::chargeCheck(Rectangle *player){
+    if (isInCharge) return;
+
     Vector2 playerPos = {player->x + player->width / 2, player->y + player->height};
     Vector2 boarPos = {characterRec.x + characterRec.width / 2, characterRec.y + characterRec.height};
 
-    if(Vector2Distance(playerPos, boarPos) <= 200.f)
+    float distance = Vector2Distance(playerPos, boarPos);
+    bool isPlayerInFront = (direction > 0 && playerPos.x > boarPos.x) || 
+                           (direction < 0 && playerPos.x < boarPos.x);
+
+    if (player->x >= movementRangeLeft && player->x <= movementRangeRight 
+        && isPlayerInFront && distance <= 300.f) {
         isInCharge = true;
+    }
 }

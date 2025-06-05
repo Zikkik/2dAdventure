@@ -4,6 +4,8 @@ character::character(){
     // Flags
     isMoving = {false};
     isOnGround = {false};
+    recentlyDamaged = {false};
+    isAlive = {true};
 
     // Animation variables
     frame = {};
@@ -16,19 +18,23 @@ character::character(){
 
     // Gravity
     gravity = {200.0f};
+
+    // Gameplay variables
+    damageCooldown = {0.f};
 }
 
 // Character tick
 void character::tick(float deltaTime){
 
-    moveCharacter(deltaTime);
+        moveCharacter(deltaTime);
 
-    if(!isOnGround)
-        applyGravity(deltaTime);
-    else
-        velocity = {};
+        if(!isOnGround)
+            applyGravity(deltaTime);
+        else
+            velocity = {};
 
-    renderCharacter();
+        renderCharacter();
+        damageTimer(deltaTime);
 }
 
 // Update the texture based on the movement animation
@@ -188,4 +194,30 @@ Vector2 character::getSize() { return Vector2{width, height}; }
 float character::getDirection() { return rightLeft; }
 
 // Modify character's health based on damage amount
-void character::takeDamage(int amount){ health -= amount; }
+void character::takeDamage(int amount){
+    if (!recentlyDamaged){
+        health -= amount;
+        recentlyDamaged = true;
+        damageCooldown = 1.f;
+    }
+}
+
+// Timer after taken 
+void character::damageTimer(float deltaTime){
+    if (recentlyDamaged) {
+        damageCooldown -= deltaTime;
+        if (damageCooldown <= 0.f) {
+            recentlyDamaged = false;
+            damageCooldown = 0.f;
+            aliveCheck();
+        }
+    }
+}
+
+// Check if the character is alive
+void character::aliveCheck(){
+    if(health <= 0)
+        isAlive = false;
+    else
+        isAlive = true;
+}
