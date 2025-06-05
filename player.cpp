@@ -13,7 +13,7 @@ player::player(float winWidth, float winHeight) :
     actualTex = idleTex;
 
     // World position
-    worldPos = {winWidth / 2, 0};
+    worldPos = {winWidth / 2 , 0};
 
     // Character size
     height = actualTex.height;
@@ -32,6 +32,14 @@ player::player(float winWidth, float winHeight) :
     maxJumpTime = {1.0f};
     jumpCeiling = {false};
     isInJump = {false};
+
+    // Collision variables
+    paddingX = {65.f};
+    paddingY = {50.f};
+
+    // Gameplay variables
+    health = {3};
+    damage = {1};
 }
 
 // Player tick
@@ -49,12 +57,6 @@ void player::tick(float deltaTime){
         isInJump = true;
         frame = 0;
     }
-
-    // Test
-    if(actualTex.id == attackTex.id)
-        DrawRectangleLinesEx(getCollisionRec(), 1.f, BLACK);
-    if(actualTex.id == jumpTex.id)
-        DrawRectangleLinesEx(getCollisionRec(), 1.f, BLACK);
 
     if(isInJump && !jumpCeiling) jump(deltaTime);
 
@@ -114,7 +116,7 @@ void player::updateFrame(float deltaTime){
 }
 
 // Player collisions
-Rectangle player::getCollisionRec(){
+Rectangle* player::getCollisionRec(){
         if(actualTex.id == jumpTex.id)
             characterRec = {
                 worldPos.x + paddingX,
@@ -133,18 +135,18 @@ Rectangle player::getCollisionRec(){
 
         character::getCollisionRec();
 
-    return characterRec;
+    return &characterRec;
 }
 
 // Overrided collision from top
 void player::checkTopCollision(Rectangle terrainCollision){
     
     // Auxiliary variables to calculate character down edge and top edge of terrain
-    float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
+    float characterBottom = worldPos.y + getCollisionRec()->height  + paddingY;
     float terrainTop = terrainCollision.y + 8;
 
     // Check collision with terrain and top edge
-    if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
+    if(CheckCollisionRecs(terrainCollision, *getCollisionRec()) && 
         characterBottom <= terrainTop){
             isOnGround = true;
             isInJump = false;

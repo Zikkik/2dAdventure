@@ -31,7 +31,7 @@ class player : public character{
         void updateFrame(float deltaTime) override;
 
         // Overrided collision methods
-        Rectangle getCollisionRec() override;
+        Rectangle* getCollisionRec() override;
         void checkTopCollision(Rectangle terrainCollision) override;
 
         // Jump method

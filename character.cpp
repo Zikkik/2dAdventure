@@ -14,10 +14,6 @@ character::character(){
     updateTime = {1.f / 8.f};
     animCorrection = {0.f};
 
-    // Collision variables
-    paddingX = {65.f};
-    paddingY = {50.f};
-
     // Gravity
     gravity = {200.0f};
 }
@@ -25,21 +21,12 @@ character::character(){
 // Character tick
 void character::tick(float deltaTime){
 
-    // Testing
-    Rectangle testCol = getCollisionRec();
-    if(actualTex.id == idleTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, RED);
-    if(actualTex.id == runTex.id)
-        DrawRectangleLines(testCol.x, testCol.y, testCol.width, testCol.height, PURPLE);
-
     moveCharacter(deltaTime);
 
-    /*
     if(!isOnGround)
         applyGravity(deltaTime);
     else
         velocity = {};
-        */
 
     renderCharacter();
 }
@@ -146,9 +133,9 @@ void character::moveCharacter(float deltaTime){
 // Change position to previous character's position
 void character::undoMovement(){ worldPos = worldPosLast; }
 
-Rectangle character::getCollisionRec(){
+Rectangle* character::getCollisionRec(){
     // Return the rectangle based on character's actual animation
-    if(actualTex.id == idleTex.id)
+    if(actualTex.id != runTex.id)
         characterRec = {
             worldPos.x + paddingX,
             worldPos.y + paddingY,
@@ -164,7 +151,7 @@ Rectangle character::getCollisionRec(){
             height * scale - paddingY * 2
         };
     
-    return characterRec;
+    return &characterRec;
 }
 
 // If the character touches the ground, they are snapped to their top edge
@@ -179,11 +166,11 @@ void character::snapToGround(Rectangle ground){
 void character::checkTopCollision(Rectangle terrainCollision){
 
     // Auxiliary variables to calculate character down edge and top edge of terrain
-    float characterBottom = worldPos.y + getCollisionRec().height  + paddingY;
+    float characterBottom = worldPos.y + getCollisionRec()->height  + paddingY;
     float terrainTop = terrainCollision.y + 8;
 
     // Check collision with terrain and top edge
-    if(CheckCollisionRecs(terrainCollision, getCollisionRec()) && 
+    if(CheckCollisionRecs(terrainCollision, *getCollisionRec()) && 
         characterBottom <= terrainTop){
             isOnGround = true;
             snapToGround(terrainCollision);
@@ -199,3 +186,6 @@ Vector2 character::getSize() { return Vector2{width, height}; }
 
 // Return character direction
 float character::getDirection() { return rightLeft; }
+
+// Modify character's health based on damage amount
+void character::takeDamage(int amount){ health -= amount; }

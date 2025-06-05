@@ -38,6 +38,11 @@ class character{
         float paddingX;
         float paddingY;
         Rectangle characterRec;
+
+        // Gameplay variables
+        int health;
+        int damage;
+        
     public:
         character();
         virtual void tick(float deltaTime);
@@ -55,7 +60,7 @@ class character{
         void animChangeDelay(float deltaTime);
 
         // Collision
-        virtual Rectangle getCollisionRec();
+        virtual Rectangle* getCollisionRec();
         void snapToGround(Rectangle ground);
         virtual void checkTopCollision(Rectangle terrainCollision);
     
@@ -63,6 +68,9 @@ class character{
         Vector2 getWorldPos();
         Vector2 getSize();
         float getDirection();
+
+        // Gameplay
+        void takeDamage(int amount);
 };
 
 #endif
