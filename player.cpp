@@ -60,8 +60,14 @@ void player::tick(float deltaTime){
 
     if(isInJump && !jumpCeiling) jump(deltaTime);
 
-     DrawText(TextFormat("playerHealth: %.d", health), 100, 120, 20, GREEN);
+    // Holding player on the screen
+    float screenWidth = GetScreenWidth();
+    float characterWidth = width * scale;
 
+    if (worldPos.x + 50.f < 0)
+        worldPos.x = -50.f;
+    else if (worldPos.x + characterWidth - 100.f > screenWidth)
+        worldPos.x = screenWidth - characterWidth + 100.f;
 
     character::tick(deltaTime);
 }
@@ -76,7 +82,7 @@ void player::updateTex(){
         if (frame >= maxFrames - 1)
             isInAttack = false;
 
-    } else if(isInJump && !isOnGround){
+    } else if(!isOnGround){
         actualTex = jumpTex;
         maxFrames = 15;
         height = jumpTex.height;
@@ -154,7 +160,7 @@ bool player::checkTopCollision(Rectangle terrainCollision){
     // Check collision with terrain and top edge
     if(CheckCollisionRecs(terrainCollision, *getCollisionRec()) && 
         characterBottom <= terrainTop + 5.f){
-            isInJump = false;
+            resetJump();
             jumpCeiling = false;
             snapToGround(terrainCollision);
             return true;
@@ -172,9 +178,14 @@ void player::jump(float deltaTime){
         jumpForce = jumpForce + 15;
     } else {
         jumpCeiling = true;
-        jumpForce = -1200.f;
-        jumpTime = 0.f;
+        resetJump();
     }
+}
+
+void player::resetJump(){
+    jumpForce = -1200.f;
+    jumpTime = 0.f;
+    isInJump = false;
 }
 
 void player::attack(character *enemy){

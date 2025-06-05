@@ -36,8 +36,9 @@ class player : public character{
         Rectangle* getCollisionRec() override;
         bool checkTopCollision(Rectangle terrainCollision) override;
 
-        // Jump method
+        // Jump methods
         void jump(float deltaTime);
+        void resetJump();
 
         // Attack method
         void attack(character *enemy);
